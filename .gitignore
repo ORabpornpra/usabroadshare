@@ -9,6 +9,7 @@
 /dist
 /tags
 /.editorconfig
+/app/Config/core.phpx
 
 # OS generated files #
 ######################
