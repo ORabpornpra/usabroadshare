@@ -1,0 +1,16 @@
+/* 
+    Document   : usabroadshare
+    Created on : Nov 22, 2013, 2:23:10 PM
+    Author     : oat
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+.navbar-nav-list {
+    margin-top: 40px;
+}
+
+.navbar-collapse ul{
+    margin-top: 40px;
+    font-size: large;
+}

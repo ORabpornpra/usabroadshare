@@ -18,7 +18,22 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="#">Usabroadshare</a>
+<!--              <a class="navbar-brand" href="#">Usabroadshare</a>-->
+              <?php
+              echo $this->Html->link(
+                      $this->Html->image(
+                              'nav_logo.png',
+                              array('alt' => 'usabroadshareLogo')
+                              ), 
+                      array(
+                          'controller' => 'pages', 
+                          'action' => 'display'
+                          ),
+                      array(
+                          'class' => 'navbar-brand',
+                          'escape' => FALSE)
+                      );
+              ?>
             </div>
             <div class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
