@@ -31,7 +31,14 @@
                         'icon', 
                         $this->Html->url('/img/favicon.png')
                         );
-
+                echo $this->Html->meta(null, null, array(
+                    'name' => 'viewport',
+                    'content' => 'width=device-width, initial-scale=1.0'
+                ));
+                echo $this->Html->meta(NULL, NULL, array(
+                    'name' => 'author',
+                    'content' => 'Usabroadshare'
+                ));
 		echo $this->Html->css('bootstrap');
                 echo $this->Html->css('carousel');
                 echo $this->Html->css('usabroadshare');
