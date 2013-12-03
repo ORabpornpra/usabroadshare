@@ -32,5 +32,54 @@ App::uses('Controller', 'Controller');
  * @link		http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
 class AppController extends Controller {
-    public $components = array('DebugKit.Toolbar');
+    
+    
+ /**
+ * $components
+ *
+ * Auth: Handle url redirect after login and logout. 
+ *       Authorize the action in Controller
+ * 
+ */ 
+    public $components = array(
+        'DebugKit.Toolbar',
+        'Session',
+        'Auth' => array(
+            'loginRedirect' => array(
+                'controller' => 'posts', 
+                'action' => 'index'),
+            'logoutRedirect' => array(
+                'controller' => 'pages',
+                'action' => 'display', 'home'),
+            'authorize' => array('Controller')
+        )
+        );
+
+ /**
+ * beforeFilter
+ *
+ * Tell the AuthComponent not require for all index and view actions. 
+ * 
+ */
+    public function beforeFilter() {
+        parent::beforeFilter();
+        $this->Auth->allow('index', 'view', 'display', 'home');
+    }
+    
+ /**
+ * isAuthorized
+ *
+ * Give an Authorize for Admin login
+ *
+ * @param object $user 
+ * @return bool return true if Admin log in
+ */
+    public function isAuthorized($user) {
+        //Admin can access every action
+        if (isset($user['role']) && $user['role'] == 'admin') {
+            return true;
+        }
+        
+        return false;
+    }
 }

@@ -22,8 +22,37 @@ class PostsController extends AppController {
  * @var array
  */
 	public $components = array('Paginator', 'Session');
+        
+ /**
+ * isAuthorized method
+ *
+ * Allow all the register users for add action
+ * Only the owner of the post can edit or delete
+ * 
+ * @param object $user
+ * 
+ * @return bool
+ *
+ */
+        public function isAuthorized($user) {
+            
+            //All registered users can add posts
+            if ($this->action === 'add') {
+                return TRUE;
+            }
+            
+            //the owner of a post can edit and delete it
+            if (in_array($this->action, array('edit', 'delete'))) {
+                $postId = $this->request->params['pass'][0];
+                if ($this->Post->isOwnedBy($postId, $user['id'])) {
+                    return TRUE;
+                }
+            }
+            
+            return parent::isAuthorized($user);
+        }
 
-/**
+        /**
  * index method
  *
  * @return void
@@ -53,17 +82,23 @@ class PostsController extends AppController {
 /**
  * add method
  *
+ * Set user_id in Post base on the id in User (Specific which post is belong to 
+ * whom.
+ *   
  * @return void
  */
 	public function add() {
 		if ($this->request->is('post')) {
-			$this->Post->create();
-			if ($this->Post->save($this->request->data)) {
-				$this->Session->setFlash(__('The post has been saved.'));
-				return $this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The post could not be saved. Please, try again.'));
-			}
+                    $this->request->data['Post']['user_id'] = $this->Auth->user('id');
+                    $this->Post->create();
+                    if ($this->Post->save($this->request->data)) {
+                        $this->Session->setFlash(__('The post has been saved.'));
+                        return $this->redirect(array('action' => 'index'));
+                        
+                    } else {
+                        $this->Session->setFlash(__('The post could not be saved. Please, try again.'));
+                        
+                    }
 		}
 	}
 
