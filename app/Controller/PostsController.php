@@ -5,63 +5,24 @@ App::uses('AppController', 'Controller');
  *
  * @property Post $Post
  * @property PaginatorComponent $Paginator
- * @property SessionComponent $Session
  */
 class PostsController extends AppController {
-
-/**
- * Helpers
- *
- * @var array
- */
-	public $helpers = array('Html', 'Form', 'Session');
 
 /**
  * Components
  *
  * @var array
  */
-	public $components = array('Paginator', 'Session');
-        
- /**
- * isAuthorized method
- *
- * Allow all the register users for add action
- * Only the owner of the post can edit or delete
- * 
- * @param object $user
- * 
- * @return bool
- *
- */
-        public function isAuthorized($user) {
-            
-            //All registered users can add posts
-            if ($this->action === 'add') {
-                return TRUE;
-            }
-            
-            //the owner of a post can edit and delete it
-            if (in_array($this->action, array('edit', 'delete'))) {
-                $postId = $this->request->params['pass'][0];
-                if ($this->Post->isOwnedBy($postId, $user['id'])) {
-                    return TRUE;
-                }
-            }
-            
-            return parent::isAuthorized($user);
-        }
+	public $components = array('Paginator');
 
-        /**
+/**
  * index method
  *
  * @return void
  */
 	public function index() {
-            $this->layout = 'default';
 		$this->Post->recursive = 0;
-                $this->Paginator->settings = array('limit' => 2);
-		$this->set('posts', $this->Paginator->paginate('Post'));
+		$this->set('posts', $this->Paginator->paginate());
 	}
 
 /**
@@ -82,23 +43,17 @@ class PostsController extends AppController {
 /**
  * add method
  *
- * Set user_id in Post base on the id in User (Specific which post is belong to 
- * whom.
- *   
  * @return void
  */
 	public function add() {
 		if ($this->request->is('post')) {
-                    $this->request->data['Post']['user_id'] = $this->Auth->user('id');
-                    $this->Post->create();
-                    if ($this->Post->save($this->request->data)) {
-                        $this->Session->setFlash(__('The post has been saved.'));
-                        return $this->redirect(array('action' => 'index'));
-                        
-                    } else {
-                        $this->Session->setFlash(__('The post could not be saved. Please, try again.'));
-                        
-                    }
+			$this->Post->create();
+			if ($this->Post->save($this->request->data)) {
+				$this->Session->setFlash(__('The post has been saved.'));
+				return $this->redirect(array('action' => 'index'));
+			} else {
+				$this->Session->setFlash(__('The post could not be saved. Please, try again.'));
+			}
 		}
 	}
 
@@ -134,93 +89,6 @@ class PostsController extends AppController {
  * @return void
  */
 	public function delete($id = null) {
-		$this->Post->id = $id;
-		if (!$this->Post->exists()) {
-			throw new NotFoundException(__('Invalid post'));
-		}
-		$this->request->onlyAllow('post', 'delete');
-		if ($this->Post->delete()) {
-			$this->Session->setFlash(__('The post has been deleted.'));
-		} else {
-			$this->Session->setFlash(__('The post could not be deleted. Please, try again.'));
-		}
-		return $this->redirect(array('action' => 'index'));
-	}
-
-/**
- * admin_index method
- *
- * @return void
- */
-	public function admin_index() {
-		$this->Post->recursive = 0;
-		$this->set('posts', $this->Paginator->paginate());
-	}
-
-/**
- * admin_view method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-	public function admin_view($id = null) {
-		if (!$this->Post->exists($id)) {
-			throw new NotFoundException(__('Invalid post'));
-		}
-		$options = array('conditions' => array('Post.' . $this->Post->primaryKey => $id));
-		$this->set('post', $this->Post->find('first', $options));
-	}
-
-/**
- * admin_add method
- *
- * @return void
- */
-	public function admin_add() {
-		if ($this->request->is('post')) {
-			$this->Post->create();
-			if ($this->Post->save($this->request->data)) {
-				$this->Session->setFlash(__('The post has been saved.'));
-				return $this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The post could not be saved. Please, try again.'));
-			}
-		}
-	}
-
-/**
- * admin_edit method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-	public function admin_edit($id = null) {
-		if (!$this->Post->exists($id)) {
-			throw new NotFoundException(__('Invalid post'));
-		}
-		if ($this->request->is(array('post', 'put'))) {
-			if ($this->Post->save($this->request->data)) {
-				$this->Session->setFlash(__('The post has been saved.'));
-				return $this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The post could not be saved. Please, try again.'));
-			}
-		} else {
-			$options = array('conditions' => array('Post.' . $this->Post->primaryKey => $id));
-			$this->request->data = $this->Post->find('first', $options);
-		}
-	}
-
-/**
- * admin_delete method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-	public function admin_delete($id = null) {
 		$this->Post->id = $id;
 		if (!$this->Post->exists()) {
 			throw new NotFoundException(__('Invalid post'));

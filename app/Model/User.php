@@ -1,18 +1,12 @@
 <?php
 App::uses('AppModel', 'Model');
-App::uses('SimplePasswordHasher', 'Controller/Component/Auth');
 /**
  * User Model
  *
+ * @property Group $Group
+ * @property Post $Post
  */
 class User extends AppModel {
-
-/**
- * Display field
- *
- * @var string
- */
-	public $displayField = 'username';
 
 /**
  * Validation rules
@@ -21,44 +15,73 @@ class User extends AppModel {
  */
 	public $validate = array(
 		'username' => array(
-			'required' => array(
+			'notEmpty' => array(
 				'rule' => array('notEmpty'),
-				'message' => 'A username is required'
+				//'message' => 'Your custom message here',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
 		'password' => array(
-			'required' => array(
+			'notEmpty' => array(
 				'rule' => array('notEmpty'),
-				'message' => 'A password is required'
+				//'message' => 'Your custom message here',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
-		'role' => array(
-			'valid' => array(
-				'rule' => array('inList', array('admin', 'author')),
-				'message' => 'Please enter a valid role',
-				'allowEmpty' => false
+		'group_id' => array(
+			'numeric' => array(
+				'rule' => array('numeric'),
+				//'message' => 'Your custom message here',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
 	);
 
+	//The Associations below have been created with all possible keys, those that are not needed can be removed
+
 /**
- * beforeSave, overide from Model.php
+ * belongsTo associations
  *
  * @var array
- * 
- * Hash the password before save by using SimplePasswordHasher()
- * 
  */
-        public function beforeSave($options = array()) {
-            //todo not sure that I need this line or not
-            //parent::beforeSave($options);
-            
-            if (isset($this->data[$this->alias]['password'])) {
-                $passwordHasher = new SimplePasswordHasher();
-                $this->data[$this->alias]['password'] = $passwordHasher
-                        ->hash($this->data[$this->alias]['password']);
-            }
-            
-            return true;
-        }
+	public $belongsTo = array(
+		'Group' => array(
+			'className' => 'Group',
+			'foreignKey' => 'group_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+		)
+	);
+
+/**
+ * hasMany associations
+ *
+ * @var array
+ */
+	public $hasMany = array(
+		'Post' => array(
+			'className' => 'Post',
+			'foreignKey' => 'user_id',
+			'dependent' => false,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
+		)
+	);
+
 }

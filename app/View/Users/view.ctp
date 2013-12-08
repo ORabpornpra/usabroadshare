@@ -16,9 +16,9 @@
 			<?php echo h($user['User']['password']); ?>
 			&nbsp;
 		</dd>
-		<dt><?php echo __('Role'); ?></dt>
+		<dt><?php echo __('Group Id'); ?></dt>
 		<dd>
-			<?php echo h($user['User']['role']); ?>
+			<?php echo h($user['User']['group_id']); ?>
 			&nbsp;
 		</dd>
 		<dt><?php echo __('Created'); ?></dt>
